@@ -7,16 +7,20 @@ from endpoints import auth, user
 def lambda_handler(event, context):
     # TODO: Move keys to enviroment variable
     session = boto3.Session(
-        aws_access_key_id="",
-        aws_secret_access_key="",
+        aws_access_key_id="AKIA47CRWL5IINEGSZNO",
+        aws_secret_access_key="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",
         region_name='ap-southeast-1'
     )
     Ez2DBManager.connect_db(session)
 
     # Request parameters
     endpoint = event.get('endpoint')
-    http_method = event['requestContext']['http']['method']
     
+    try:
+        http_method = event['requestContext']['http']['method']
+    except KeyError:
+        endpoint = None
+
     match endpoint:
         case "login":
             result = auth.login(event)

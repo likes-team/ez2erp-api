@@ -24,14 +24,14 @@ def lambda_handler(event, context):
     match endpoint:
         case "login":
             result = auth.login(event)
-            message = ""
-            return result
+            message = "Logged in Successfully!"
         case "users":
             if http_method == 'GET':
-                pass
+                result = {'fname': 'test', 'lname': 'data'}
+                message = "Success!"
             elif http_method == 'POST':
                 result = user.create_user(event)
-            message = "User created successfully!"
+                message = "User created successfully!"
 
         case "orders":
             pass
@@ -43,26 +43,37 @@ def lambda_handler(event, context):
                 'status': 'error',
                 'message': message
             }
-    
+
     return {
         'status': 'success',
+        'data': result,
         'message': message
     }
 
+
 if __name__ == '__main__':
+    from http.server import HTTPServer
+    from local_server import LambdaLocalServer
+
     event = {
         'endpoint': 'login',
     }
 
     create_user_event = {
-        'endpoint': 'users',
-        'requestContext': {'http': {'method': 'POST'}},
-        'email': 'rmontemayor0101@gmail.com',
-        'phone_no': '09288657242',
-        'fname': 'Rob',
-        'lname': 'Mon',
-        'mname': '',
-        'password': 'adminpassword'
+        "endpoint": "users",
+        "requestContext": {"http": {"method": "POST"}},
+        "email": "rmontemayor0101@gmail.com",
+        "phone_no": "09288657242",
+        "fname": "Rob",
+        "lname": "Mon",
+        "mname": "",
+        "password": "adminpassword"
     }
     context = {}
-    lambda_handler(create_user_event, context)
+    # lambda_handler(create_user_event, context)
+
+    host = "localhost"
+    port = 8000
+    httpd = HTTPServer(('', port), LambdaLocalServer)
+    print(f'Lambda Local Server is running on http://{host}:{port}')
+    httpd.serve_forever()

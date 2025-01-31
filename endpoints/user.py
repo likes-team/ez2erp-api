@@ -13,4 +13,4 @@ def create_user(event):
     encryption_key = get_random_bytes(16)
     user.encrypt_password(password, encryption_key)
     user.save()
-    return user.to_json()
+    return user.to_dict()

@@ -6,10 +6,16 @@ def login(event):
     password = event.get('password')
     print("email", email)
 
-    user = User.ez2.select_by_index(
+    user: User = User.ez2.select_by_index(
         index_name='email-index',
         key='email',
         val=email
     )
-    print(user)
-    return user
+    print(user.__dict__)
+    is_password_matched = user.decrypt_password(password)
+
+    if user is None or not is_password_matched:
+        return None, "error", "Wrong Credentials!"
+
+    return user, "success", "Logged in Successfully!"
+

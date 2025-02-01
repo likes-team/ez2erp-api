@@ -7,10 +7,8 @@ def create_user(event):
     user.fname = event.get('fname')
     user.lname = event.get('lname')
     user.email = event.get('email')
-    
     password = event.get('password')
 
-    encryption_key = get_random_bytes(16)
-    user.encrypt_password(password, encryption_key)
+    user.encrypt_password(password)
     user.save()
     return user.to_dict()

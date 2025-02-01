@@ -21,16 +21,17 @@ def lambda_handler(event, context):
     except KeyError:
         endpoint = None
 
+    status = "success"
+
     match endpoint:
         case "login":
-            result = auth.login(event)
-            message = "Logged in Successfully!"
+            data, status, message = auth.login(event)
         case "users":
             if http_method == 'GET':
-                result = {'fname': 'test', 'lname': 'data'}
+                data = {'fname': 'test', 'lname': 'data'}
                 message = "Success!"
             elif http_method == 'POST':
-                result = user.create_user(event)
+                data = user.create_user(event)
                 message = "User created successfully!"
 
         case "orders":
@@ -38,42 +39,27 @@ def lambda_handler(event, context):
         case "payments":
             pass
         case default:
+            status = "error"
             message = "Endpoint is not available"
-            return {
-                'status': 'error',
-                'message': message
-            }
 
     return {
-        'status': 'success',
-        'data': result,
+        'status': status,
+        'data': data,
         'message': message
     }
 
 
-if __name__ == '__main__':
+def _start_server():
     from http.server import HTTPServer
     from local_server import LambdaLocalServer
-
-    event = {
-        'endpoint': 'login',
-    }
-
-    create_user_event = {
-        "endpoint": "users",
-        "requestContext": {"http": {"method": "POST"}},
-        "email": "rmontemayor0101@gmail.com",
-        "phone_no": "09288657242",
-        "fname": "Rob",
-        "lname": "Mon",
-        "mname": "",
-        "password": "adminpassword"
-    }
-    context = {}
-    # lambda_handler(create_user_event, context)
 
     host = "localhost"
     port = 8000
     httpd = HTTPServer(('', port), LambdaLocalServer)
     print(f'Lambda Local Server is running on http://{host}:{port}')
     httpd.serve_forever()
+
+
+if __name__ == '__main__':
+    # python lambda_function.py starting point"
+    _start_server()

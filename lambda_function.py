@@ -22,6 +22,7 @@ def lambda_handler(event, context):
         endpoint = None
 
     status = "success"
+    data = None
 
     match endpoint:
         case "login":

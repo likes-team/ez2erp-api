@@ -2,6 +2,7 @@ import json
 import boto3
 from ez2erp_engine.db import Ez2DBManager
 from endpoints import auth, user
+from ez2erp_engine.models import Organization
 
 
 def lambda_handler(event, context):
@@ -44,6 +45,12 @@ def lambda_handler(event, context):
                     print("This is the http method True")
                 data = user.create_user(body)
                 message = "User created successfully!"
+        case "organizations":
+            print("TEST")
+            org = Organization(name="test2")
+            org.name = "test"
+            org.description = "descriptions"
+            print(org.__dict__)
 
         case "orders":
             pass

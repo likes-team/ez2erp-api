@@ -17,5 +17,5 @@ def login(event):
     if user is None or not is_password_matched:
         return None, "error", "Wrong Credentials!"
 
-    return user, "success", "Logged in Successfully!"
+    return user.to_dict(), "success", "Logged in Successfully!"
 

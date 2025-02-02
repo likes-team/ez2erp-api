@@ -27,10 +27,10 @@ def lambda_handler(event, context):
         http_method = None  # Ensure http_method is always defined
         print("Error: requestContext.http.method not found in event")
         data = None 
-      
-       
+
     status = "success"
-    
+    data = None
+    message = None
 
     match endpoint:
         case "login":

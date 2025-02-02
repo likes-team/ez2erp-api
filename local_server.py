@@ -10,7 +10,7 @@ class LambdaLocalServer(BaseHTTPRequestHandler):
         
         event = {
             'endpoint': self.path.replace('/', ''),
-            'requestContext': {'http': {'method': 'GET'}},
+            'httpMethod': {'http': {'method': 'GET'}},
         }
         print(event)
         context = {}
@@ -43,7 +43,8 @@ class LambdaLocalServer(BaseHTTPRequestHandler):
         # test_data = simplejson.loads(post_body)
         event = {
             'endpoint': self.path.replace('/', ''),
-            'requestContext': {'http': {'method': 'POST'}},
+            'httpMethod': 'POST',
+            'body': post_data
         }
         event = event | post_data
         print(event)

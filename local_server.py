@@ -7,16 +7,20 @@ from lambda_function import lambda_handler
 class LambdaLocalServer(BaseHTTPRequestHandler):
     def do_GET(self):
         print(f'EZ2ERP request = GET > {self.path}')
-        
+        # post_data = json.loads(
+        #     self.rfile.read(
+        #         int(self.headers.get('Content-Length'))
+        #     ).decode("UTF-8"))
         event = {
             'endpoint': self.path.replace('/', ''),
-            'httpMethod': {'http': {'method': 'GET'}},
+            'httpMethod': 'GET',
+            # 'body': post_data
         }
         print(event)
         context = {}
         response = lambda_handler(event, context)
 
-        self.send_response(200)
+        self._set_headers()
         self.send_header('Content-type', 'application/json')
         self.end_headers()
 
@@ -52,7 +56,6 @@ class LambdaLocalServer(BaseHTTPRequestHandler):
         response = lambda_handler(event, context)
         print(response)
         self._set_headers()
-        self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(json.dumps(response).encode('utf-8'))

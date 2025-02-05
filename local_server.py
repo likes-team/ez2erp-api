@@ -51,8 +51,20 @@ class LambdaLocalServer(BaseHTTPRequestHandler):
         context = {}
         response = lambda_handler(event, context)
         print(response)
+        self._set_headers()
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-
         self.wfile.write(json.dumps(response).encode('utf-8'))
+
+    def do_OPTIONS(self):
+        self._set_headers()
+        self.end_headers()
+
+    def _set_headers(self):
+        self.send_response(200, "ok")
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, OPTIONS, POST')
+        self.send_header("Access-Control-Allow-Headers", "X-Requested-With")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        # self.end_headers()

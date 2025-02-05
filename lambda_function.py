@@ -1,7 +1,9 @@
 import json
 import boto3
 from ez2erp_engine.db import Ez2DBManager
-from endpoints import auth, user
+from endpoints import (
+    auth, user, inventory
+)
 from ez2erp_engine.models import Organization
 
 
@@ -16,18 +18,11 @@ def lambda_handler(event, context):
     Ez2DBManager.connect_db(session)
 
     # Request parameters
-    
-    try:
-        endpoint = event.get('endpoint')
-        http_method = event.get('httpMethod')
-        body = event.get('body')
-        print ("This is the endpoint",endpoint)
-        print ("this is the http method",http_method)
-    except KeyError:
-      #  endpoint = None
-        http_method = None  # Ensure http_method is always defined
-        print("Error: requestContext.http.method not found in event")
-        data = None 
+    endpoint = event.get('endpoint')
+    http_method = event.get('httpMethod')
+    body = event.get('body')
+    print ("This is the endpoint",endpoint)
+    print ("this is the http method",http_method)
 
     status = "success"
     data = None
@@ -41,10 +36,14 @@ def lambda_handler(event, context):
                 data = {'fname': 'test', 'lname': 'data'}
                 message = "Success!"
             elif http_method == 'POST':
-                if http_method:
-                    print("This is the http method True")
-                data = user.create_user(body)
-                message = "User created successfully!"
+                data, status, message = user.create_user(body)
+        case "products":
+            if http_method == 'GET':
+                data = []
+                message = ""
+            elif http_method == 'POST':
+                data, status, message = inventory.create_product(body)
+                message = None
         case "organizations":
             print("TEST")
             org = Organization(name="test2")

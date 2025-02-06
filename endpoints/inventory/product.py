@@ -1,5 +1,18 @@
+from boto3.dynamodb.conditions import Key
 from ez2erp_engine.models import Product
-from decimal import Decimal
+
+
+def get_products(event):
+    # key_condition = Key("id")
+    products, offset_key = Product.ez2.select()
+    result = {
+        'data': [],
+        'last_key': offset_key
+    }
+    for product in products:
+        result['data'].append(product.to_dict())
+
+    return result, "success", "Products retrieved successfully!"
 
 
 def create_product(event):

@@ -1,6 +1,5 @@
-from ez2erp_engine.models import User, Organization
-from ez2erp_engine.db import Ez2DBManager
-# from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key
+from ez2erp_engine.models import User
 
 
 def login(event):
@@ -9,10 +8,10 @@ def login(event):
     print("email", email)
 
     # Sample ORM usage
+    key_condition = Key('email').eq(email)
     user: User = User.ez2.select_by_index(
         index_name='email-index',
-        key='email',
-        val=email
+        key_condition=key_condition
     )
 
     # # Sample direct usage  

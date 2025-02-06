@@ -39,8 +39,7 @@ def lambda_handler(event, context):
                 data, status, message = user.create_user(body)
         case "products":
             if http_method == 'GET':
-                data = []
-                message = ""
+                data, status, message = inventory.get_products({})
             elif http_method == 'POST':
                 data, status, message = inventory.create_product(body)
                 message = None
@@ -59,11 +58,12 @@ def lambda_handler(event, context):
             status = "error"
             message = "Endpoint is not available"
 
-    return {
+    response = {
         'status': status,
-        'data': data,
         'message': message
     }
+    response = response | data
+    return response
 
 
 def _start_server():

@@ -1,1 +1,1 @@
-from .product import create_product
+from .product import *

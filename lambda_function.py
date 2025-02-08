@@ -39,10 +39,11 @@ def lambda_handler(event, context):
                 data, status, message = user.create_user(body)
         case "products":
             if http_method == 'GET':
-                data, status, message = inventory.get_products({})
+                data, status, message = inventory.get_products(body)
             elif http_method == 'POST':
                 data, status, message = inventory.create_product(body)
-                message = None
+            elif http_method == 'PUT':
+                data, status, message = inventory.edit_product(body)
         case "organizations":
             print("TEST")
             org = Organization(name="test2")

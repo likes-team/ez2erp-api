@@ -7,15 +7,23 @@ from lambda_function import lambda_handler
 class LambdaLocalServer(BaseHTTPRequestHandler):
     def do_GET(self):
         print(f'EZ2ERP request = GET > {self.path}')
-        # post_data = json.loads(
-        #     self.rfile.read(
-        #         int(self.headers.get('Content-Length'))
-        #     ).decode("UTF-8"))
+
+        path = self.path.split('/')
+        if len(path) == 3:
+            endpoint = path[-2]
+            oid = path[-1]
+        elif len(path) == 2:
+            endpoint = path[-1]
+            oid = None
+    
         event = {
-            'endpoint': self.path.replace('/', ''),
+            'endpoint': endpoint,
             'httpMethod': 'GET',
-            # 'body': post_data
         }
+
+        if oid:
+            event['body'] = {'oid': oid} 
+
         print(event)
         context = {}
         response = lambda_handler(event, context)
@@ -35,22 +43,35 @@ class LambdaLocalServer(BaseHTTPRequestHandler):
             self.rfile.read(
                 int(self.headers.get('Content-Length'))
             ).decode("UTF-8"))
-
-        # length = int(self.headers.get('content-length'))
-        # data = cgi.parse_qs(self.rfile.read(length), keep_blank_values=1)
-        # print(data)
-        # recordID = self.path.split('/')[-1]
-
-        # print("length :", length)
-        # print("content : %s" % self.rfile.read(length))
-        # post_body = self.rfile.read(content_length)
-        # test_data = simplejson.loads(post_body)
         event = {
             'endpoint': self.path.replace('/', ''),
             'httpMethod': 'POST',
             'body': post_data
         }
         event = event | post_data
+
+        print(event)
+        context = {}
+        response = lambda_handler(event, context)
+        print(response)
+        self._set_headers()
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps(response).encode('utf-8'))
+
+    def do_PUT(self):
+        print(f'EZ2ERP request = PUT > {self.path}')
+        post_data = json.loads(
+            self.rfile.read(
+                int(self.headers.get('Content-Length'))
+            ).decode("UTF-8"))
+        event = {
+            'endpoint': self.path.replace('/', ''),
+            'httpMethod': 'POST',
+            'body': post_data
+        }
+        event = event | post_data
+
         print(event)
         context = {}
         response = lambda_handler(event, context)

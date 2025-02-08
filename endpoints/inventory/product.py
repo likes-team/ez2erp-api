@@ -2,8 +2,22 @@ from boto3.dynamodb.conditions import Key
 from ez2erp_engine.models import Product
 
 
+
+def get_product(product_id, event):
+    product = Product.ez2.get(product_id)
+    result = {
+        'data': product.to_dict()
+    }
+
+    return result, "success", "Product retrieved successfully!"
+
+
 def get_products(event):
-    # key_condition = Key("id")
+    oid = event.get('oid')
+
+    if oid:
+        return get_product(oid, event)
+
     products, offset_key = Product.ez2.select()
     result = {
         'data': [],
@@ -26,3 +40,17 @@ def create_product(event):
 
     product.save()
     return product.to_dict(), 'success', "Product created successfully!"
+
+
+def edit_product(event):
+    product_id = event.get('id')
+    product = Product.ez2.get(product_id)
+    product.name = event.get('name')
+    product.cost_price = str(event.get('cost_price'))
+    product.sale_price = str(event.get('sale_price'))
+    product.product_type = event.get('product_type')
+    product.category_id = event.get('category_id')
+    product.sku = event.get('sku')
+
+    product.save()
+    return product.to_dict(), 'success', "Product updated successfully!"

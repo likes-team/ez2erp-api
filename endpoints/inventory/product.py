@@ -3,7 +3,7 @@ from ez2erp_engine.models import Product
 
 
 
-def get_product(product_id, event):
+def get_product(product_id):
     product = Product.ez2.get(product_id)
     result = {
         'data': product.to_dict()
@@ -13,10 +13,9 @@ def get_product(product_id, event):
 
 
 def get_products(event):
-    oid = event.get('oid')
-
-    if oid:
-        return get_product(oid, event)
+    if event:
+        oid = event.get('oid')
+        if oid: return get_product(oid, event)
 
     products, offset_key = Product.ez2.select()
     result = {

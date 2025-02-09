@@ -44,6 +44,8 @@ def lambda_handler(event, context):
                 data, status, message = inventory.create_product(body)
             elif http_method == 'PUT':
                 data, status, message = inventory.edit_product(body)
+            elif http_method == 'DELETE':
+                data, status, message = inventory.delete_product(body)
         case "organizations":
             print("TEST")
             org = Organization(name="test2")

@@ -13,9 +13,9 @@ def get_product(product_id):
 
 
 def get_products(event):
-    if event:
-        oid = event.get('oid')
-        if oid: return get_product(oid, event)
+    oid = event.get('oid')
+    if oid:
+        return get_product(oid)
 
     products, offset_key = Product.ez2.select()
     result = {
@@ -30,6 +30,7 @@ def get_products(event):
 
 def create_product(event):
     product = Product()
+    print("test", product.in_db)
     product.name = event.get('name')
     product.cost_price = str(event.get('cost_price', "0.00"))
     product.sale_price = str(event.get('sale_price', "0.00"))
@@ -42,7 +43,7 @@ def create_product(event):
 
 
 def edit_product(event):
-    product_id = event.get('id')
+    product_id = event.get('oid')
     product = Product.ez2.get(product_id)
     product.name = event.get('name')
     product.cost_price = str(event.get('cost_price'))
@@ -50,6 +51,15 @@ def edit_product(event):
     product.product_type = event.get('product_type')
     product.category_id = event.get('category_id')
     product.sku = event.get('sku')
-
     product.save()
     return product.to_dict(), 'success', "Product updated successfully!"
+
+
+def delete_product(event):
+    product_id = event.get('oid')
+    deleted_id = Product.ez2.delete(product_id)
+
+    response = {
+        'data': deleted_id
+    }
+    return response, 'success', "Product deleted successfully!"

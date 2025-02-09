@@ -10,5 +10,8 @@ def create_user(event):
 
     user.encrypt_password(password)
     user.save()
-    return user.to_dict(), 'success', "User created successfully!"
+    response = {
+        'data': user.to_dict()
+    }
+    return response, 'success', "User created successfully!"
 

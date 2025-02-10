@@ -25,8 +25,8 @@ def lambda_handler(event, context):
     print ("this is the http method",http_method)
 
     status = "success"
-    data = None
-    message = None
+    data = {}
+    message = ""
 
     match endpoint:
         case "login":
@@ -46,13 +46,21 @@ def lambda_handler(event, context):
                 data, status, message = inventory.edit_product(body)
             elif http_method == 'DELETE':
                 data, status, message = inventory.delete_product(body)
+        case "product-categories":
+            if http_method == 'GET':
+                data, status, message = inventory.get_product_categories(body)
+            elif http_method == 'POST':
+                data, status, message = inventory.create_product_category(body)
+            elif http_method == 'PUT':
+                data, status, message = inventory.edit_product(body)
+            elif http_method == 'DELETE':
+                data, status, message = inventory.delete_product(body)
         case "organizations":
             print("TEST")
             org = Organization(name="test2")
             org.name = "test"
             org.description = "descriptions"
             print(org.__dict__)
-
         case "orders":
             pass
         case "payments":
@@ -60,6 +68,7 @@ def lambda_handler(event, context):
         case default:
             status = "error"
             message = "Endpoint is not available"
+            data = {}
 
     response = {
         'status': status,
